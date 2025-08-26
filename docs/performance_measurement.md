@@ -41,10 +41,10 @@ This provides high-resolution wall-clock timing suitable for performance tests.
 
 ## Usage Guide
 
-To measure both execution time and memory usage, use the `@measure` decorator from `logger.py`:
+To measure both execution time and memory usage, use the `@measure` decorator from `loggers.py`:
 
 ```python
-from tests.utils.logger import measure
+from tests.utils.loggers import measure
 
 @measure("logs/uncategorized/fibonacci_logs.csv")
 def fib(n):
@@ -58,7 +58,7 @@ When run, the decorator will:
 
 **CSV log format:**
 
-```
+```csv
 git_head,test_name,elapsed_ms,peak_kib
 b6f5833,test_fib_10,0.181,0.234
 ```

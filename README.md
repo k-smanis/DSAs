@@ -8,7 +8,7 @@ This project implements various algorithms and data structures in a clean, testa
 
 ## Features
 
-- **Algorithms**: Implemented from first principles without high-level shortcuts.
+- **Algorithms**: Implemented from scratch without high-level shortcuts.
 - **Data Structures**: Stacks, queues, linked lists, trees, graphs, and more (organized under `src/`).
 - **Performance Measurement** (standard library only):
 

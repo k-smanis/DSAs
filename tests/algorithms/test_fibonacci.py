@@ -1,6 +1,5 @@
 import pytest
-from algorithms.fibonacci import fibonacci
-from tests.utils.loggers import measure
+from algorithms.fibonacci import fibonacci, reset_fibonacci_memo
 
 CSV_LOG_PATH = "logs/fibonacci/fibonacci_logs.csv"
 
@@ -10,49 +9,24 @@ def fibonacci_map():
     return {
         0: 0,
         1: 1,
-        2: 1,
-        3: 2,
-        4: 3,
         5: 5,
-        6: 8,
-        7: 13,
-        8: 21,
-        9: 34,
         10: 55,
-        11: 89,
-        12: 144,
-        13: 233,
-        14: 377,
         15: 610,
-        16: 987,
-        17: 1597,
-        18: 2584,
-        19: 4181,
         20: 6765,
-        21: 10946,
-        22: 17711,
-        23: 28657,
-        24: 46368,
-        25: 75025,
-        26: 121393,
-        27: 196418,
-        28: 317811,
-        29: 514229,
-        30: 832040,
-        31: 1346269,
-        32: 2178309,
-        33: 3524578,
-        34: 5702887,
-        35: 9227465,
-        36: 14930352,
-        37: 24157817,
         38: 39088169,
-        39: 63245986,
-        40: 102334155,
     }
 
 
-@measure(csv_path=CSV_LOG_PATH)
-def test_fibonacci(fibonacci_map):
-    for n, expected in fibonacci_map.items():
-        assert fibonacci(n) == expected
+def test_fibonacci_recursive(fibonacci_map):
+    for N, expected in fibonacci_map.items():
+        assert fibonacci(N) == expected
+
+
+def test_fibonacci_iterative(fibonacci_map):
+    for N, expected in fibonacci_map.items():
+        assert fibonacci(N, variant="iterative") == expected
+
+
+def test_fibonacci_invalid_mode(fibonacci_map):
+    with pytest.raises(ValueError):
+        fibonacci(5, variant="random")

@@ -7,5 +7,5 @@ name = "dsas"
 version = "0.0.0"
 
 [tool.setuptools]
-package-dir = {"" = "src", "tests" = "tests"}
-packages = ["algorithms", "data_structures", "tests", "tests.algorithms", "tests.utils"]
+package-dir = {"" = "src", "tests" = "tests", "utils" = "utils"}
+packages = ["algorithms", "data_structures", "tests", "tests.algorithms", "tests.data_structures", "utils"]

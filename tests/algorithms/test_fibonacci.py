@@ -1,5 +1,5 @@
 import pytest
-from algorithms.fibonacci import fibonacci, reset_fibonacci_memo
+from algorithms.fibonacci import fibonacci
 
 CSV_LOG_PATH = "logs/fibonacci/fibonacci_logs.csv"
 

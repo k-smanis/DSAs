@@ -16,5 +16,5 @@ build/
 # Virtual environment
 .venv/
 
-#Logs
-/logs
+# Benchmarks
+/benchmarks

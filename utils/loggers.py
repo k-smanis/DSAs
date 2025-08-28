@@ -9,14 +9,29 @@ import inspect
 from typing import Any, Tuple, Callable
 
 
-# Configs
-
-
-# Metadata
+# Thread-Based Metadata Storage
 call_metadata = threading.local()  # Thread-local storage to track recursion level
 
 
-# Readers
+# Helpers
+def clear_previous_benchmarks(fn: Callable) -> None:
+    """
+    Clear the CSV benchmarks file for `fn`.
+
+    Args:
+        fn: The function whose benchmark CSV should be cleared.
+        keep_header: If True, rewrites the header row. If False, truncates to empty.
+    """
+    # Prep CSV Directory
+    CSV_BENCHMARK_PATH = f"benchmarks/{fn.__name__}_benchmarks.csv"
+    folder = os.path.dirname(CSV_BENCHMARK_PATH)
+    if folder:
+        os.makedirs(folder, exist_ok=True)
+
+    # Truncate File
+    open(CSV_BENCHMARK_PATH, "w").close()
+
+
 def read_time() -> datetime:
     return datetime.now(timezone.utc)
 
@@ -60,6 +75,9 @@ def benchmark_logger(fn: Callable, /, *args, **kwargs):
     - elapsed_ms: Wall-clock execution time in milliseconds.
     - peak_kib: Peak Python memory usage in KiB (measured with tracemalloc, includes recursion).
     """
+    # Config Column Presets (columns to not benchmark, mostly because their purpose is only assistive)
+    dull_columns = {"memo"}
+
     # Prep CSV Directory
     CSV_BENCHMARK_PATH = f"benchmarks/{fn.__name__}_benchmarks.csv"
     folder = os.path.dirname(CSV_BENCHMARK_PATH)
@@ -80,15 +98,23 @@ def benchmark_logger(fn: Callable, /, *args, **kwargs):
 
     # Prep CSV File
     param_names = list(sig.parameters.keys())
+    # Skip Dull Columns
+    for i, param_name in enumerate(param_names):
+        if param_name in dull_columns:
+            param_names.pop(i)
+
     fields = ["algorithm", *param_names, "elapsed_ms", "peak_kib"]
     row = {"algorithm": fn.__name__}
-    for name in param_names:
-        row[name] = repr(bound.arguments.get(name))
+    for param_name in param_names:
+        # Skip Dull Columns
+        if param_name in dull_columns:
+            continue
+        row[param_name] = str(bound.arguments.get(param_name))
     row["elapsed_ms"] = f"{elapsed_ms:.3f}"
     row["peak_kib"] = f"{peak_kib:.3f}"
 
     # Write once per outer call
-    with open(CSV_BENCHMARK_PATH, "a+", newline="") as f:
+    with open(CSV_BENCHMARK_PATH, "a", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fields)
         if f.tell() == 0:
             writer.writeheader()
